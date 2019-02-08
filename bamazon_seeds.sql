@@ -1,18 +1,3 @@
-DROP DATABASE IF EXISTS bamazon;
-
-CREATE DATABASE bamazon;
-
-USE bamazon;
-
-CREATE TABLE products(
-id INTEGER AUTO_INCREMENT,
-product_name VARCHAR (255) NOT NULL,
-department_name VARCHAR (255) NOT NULL,
-price DECIMAL(10, 2) NOT NULL,
-stock_quantity INTEGER(10) NOT NULL,
-PRIMARY KEY id
-);
-
 INSERT INTO products (product_name, department_name, price, stock_quantity)
 VALUES 
 ('Nose Hair Trimmer', 'Personal Hygene', 24, 3),
@@ -32,6 +17,16 @@ VALUES
 ('MAXXIS Minion DHR', 'MTB Supplies', 60, 10);
 
 SELECT * FROM products;
+
+
+INSERT INTO departments (dep_name, dep_overhead)
+VALUES
+('Pet Supplies', 600.44),
+('Personal Hygene', 343.99),
+('MTB Supplies', 803.00),
+('Computer Supplies', 880.44);
+
+SELECT * FROM departments;
 
 
 

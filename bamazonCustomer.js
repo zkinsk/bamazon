@@ -48,11 +48,11 @@ function purchasePrompt(){
       let price = res[0].price;
       let stockNum = res[0].stock_quantity;
       let purNum = parseInt(item.itemQuantity);
-      let cost = price * purNum;
+      let cost = (price * purNum).toFixed(2);
       if (purNum > stockNum){
         console.log(`Sorry, we only have ${stockNum} of those in stock.`)
       }else{
-        console.log(`Great! That will be $${(purNum * price).toFixed(2)}`)
+        console.log(`Great! That will be $${cost}`)
         updateStock(item.itemID, (stockNum - purNum), cost);
       }
 

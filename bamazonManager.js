@@ -89,8 +89,18 @@ function addInventory(){
   })
 }// end of addInventory fn
 
-function addNewItem(){
-  let deptArr = ["Personal Hygene", "Pet Supplies", "Computer Supplies", "MTB Supplies"]
+function departmentCheck(){
+  let deptArr = [];
+  let query = "SELECT dep_name FROM departments"
+  connection.query(query, function(err,res){
+    res.forEach(function(dep){
+      deptArr.push(dep.dep_name)
+    });
+    addNewItem(deptArr);
+  })
+}//end of departmentCheck fn
+
+function addNewItem(deptArr){
   inquirer.prompt([
     {
       type: "list",
@@ -134,7 +144,7 @@ function addNewItem(){
 }//end addNewItem fn
 
 var showMenu = () => {
-let choiceArr = ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product","Exit"]
+let choiceArr = ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product","Add New Department", "Exit"]
 inquirer.prompt([
   {
     type: "list",
@@ -154,9 +164,12 @@ inquirer.prompt([
       addInventory();
       break;
       case choiceArr[3]:
-      addNewItem();
+      departmentCheck();
       break;
       case choiceArr[4]:
+      addNewDepartment();
+      break;
+      case choiceArr[5]:
       connection.end();
       process.exit();
       break;
