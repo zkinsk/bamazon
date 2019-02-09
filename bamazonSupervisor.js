@@ -52,7 +52,7 @@ var addDepartment = () =>{
       message: "What is its overhead?",
     }
   ]).then(function(add){
-    console.log(add);
+    // console.log(add);
     let insert = "INSERT INTO departments SET ?";
     let newDep = {
       dep_name: add.dept_name,
@@ -71,5 +71,47 @@ var addDepartment = () =>{
 
 
 var departmentSales = () =>{
+  let departmentArr = [];
+  connection.query("SELECT dep_name FROM departments", function(err,res){
+    if (err){throw err};
+    res.forEach(function(dep){
+      departmentArr.push(dep.dep_name);
+    })
+    departmentObj(departmentArr);
+  });//end of connection query
+} //end departmentSales fn
 
+var departmentObj = (depArr) =>{
+  let salesArr = []
+  let query = "SELECT department_name, number_sold, price, dep_overhead FROM products, departments WHERE products.department_name = departments.dep_name"
+  connection.query(query,function(err,res){
+    if(err){throw err};
+    depArr.forEach(function(dep){
+      let x = {
+        department: dep,
+        overhead: 0,
+        totSales: 0,
+      }
+      res.forEach(function(res){
+        if (dep === res.department_name ){
+          x.overhead = res.dep_overhead;
+          x.totSales += (res.number_sold * res.price)
+        }
+      })
+      salesArr.push(x);
+    })
+    // console.log(salesArr);
+    deptLog(salesArr);
+  })//end of connection query
 }//end departmentSales fn
+
+var deptLog = (salesArr) =>{
+  salesArr.forEach(function (dep){
+    let profit = (dep.totSales - dep.overhead).toFixed(2);
+    console.log(`
+    Department: ${dep.department} || Overhead: $${dep.overhead.toFixed(2)} || Total Sales: $${dep.totSales.toFixed(2)} || Profit: $${profit}
+    `)
+
+  });//end sales arr.forEach
+  connection.end();
+}

@@ -20,6 +20,7 @@ function listAllItems(){
   let query = "SELECT * FROM products"
   connection.query(query,function(err,res){
     if(err){throw err};
+    // console.log(res);
     res.forEach(function(prod){
       console.log(`
       Item ID: ${prod.id}  -  ${prod.product_name} - $${prod.price}`)
@@ -42,7 +43,7 @@ function purchasePrompt(){
       message: "How Many do you want to purchase?"
     }
   ]).then(function(item){
-    let query = "SELECT product_name,stock_quantity,price FROM products WHERE ?"
+    let query = "SELECT product_name,stock_quantity,price,number_sold FROM products WHERE ?"
     connection.query(query,[{id: item.itemID}],function(err,res){
       if(err){throw err};
       let price = res[0].price;
@@ -53,16 +54,15 @@ function purchasePrompt(){
         console.log(`Sorry, we only have ${stockNum} of those in stock.`)
       }else{
         console.log(`Great! That will be $${cost}`)
-        updateStock(item.itemID, (stockNum - purNum), cost);
+        updateStock(item.itemID, purNum);
       }
-
     })
   });
 }//end of purchase prompt fn
 
-function updateStock(id, num, cost){
-  let update = "UPDATE products SET?,? WHERE ?";
-  connection.query(update,[{stock_quantity: num}, {sales: cost},{id: id}],function(err,res){
+function updateStock(id, purNum){
+  let update = "UPDATE products SET `stock_quantity` = `stock_quantity` - ?,`number_sold` = `number_sold` + ? WHERE ?";
+  connection.query(update,[purNum,purNum,{id: id}],function(err,res){
     if(err){throw err};
     // console.log(res);
     connection.end();
