@@ -20,6 +20,6 @@ CREATE TABLE departments (
   dep_name VARCHAR(255) NOT NULL,
   dep_overhead DECIMAL(10 , 2 ) NOT NULL,
   dep_sales DECIMAL(10 , 2 ),
-  dep_profit INTEGER(10),
+  dep_profit DECIMAL(10, 2),
   PRIMARY KEY (id)
 );

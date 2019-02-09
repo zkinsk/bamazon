@@ -14,7 +14,9 @@ VALUES
 ('MTB Seat', 'MTB Supplies', 30, 3),
 ('MTB Pedals', 'MTB Supplies', 40, 15),
 ('6mm Stem', 'MTB Supplies', 80, 3),
-('MAXXIS Minion DHR', 'MTB Supplies', 60, 10);
+('MAXXIS Minion DHR', 'MTB Supplies', 60, 10),
+('Old Shirt', 'Clothing', 44.22, 4),
+('Sock With Hole', 'Clothing', 33.22, 5);
 
 SELECT * FROM products;
 
@@ -24,7 +26,8 @@ VALUES
 ('Pet Supplies', 600.44),
 ('Personal Hygene', 343.99),
 ('MTB Supplies', 803.00),
-('Computer Supplies', 880.44);
+('Computer Supplies', 880.44),
+('Clothing', 678.44);
 
 SELECT * FROM departments;
 

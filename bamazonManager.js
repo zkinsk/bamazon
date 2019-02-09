@@ -61,7 +61,6 @@ function addInventory(){
       else{
         console.log(`ID: ${prod.id}  -  ${prod.product_name} - $${prod.price} || Stock Quantity: ${prod.stock_quantity}`);
       }
-      
     })
     console.log("\n===============\n")
     inquirer.prompt([
@@ -144,7 +143,7 @@ function addNewItem(deptArr){
 }//end addNewItem fn
 
 var showMenu = () => {
-let choiceArr = ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product","Add New Department", "Exit"]
+let choiceArr = ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product", "Exit"]
 inquirer.prompt([
   {
     type: "list",
@@ -167,9 +166,6 @@ inquirer.prompt([
       departmentCheck();
       break;
       case choiceArr[4]:
-      addNewDepartment();
-      break;
-      case choiceArr[5]:
       connection.end();
       process.exit();
       break;

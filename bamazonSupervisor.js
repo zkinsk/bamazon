@@ -1,7 +1,9 @@
 require('dotenv').config() 
+var asTable = require ('as-table').configure ({ maxTotalWidth: 200, delimiter: '  |  ' })
 var inquirer = require("inquirer");
 var mysql = require("mysql");
 var colors = require("colors");
+
 
 
 var connection = mysql.createConnection({
@@ -70,48 +72,26 @@ var addDepartment = () =>{
 }//end addDepartment fn
 
 
-var departmentSales = () =>{
-  let departmentArr = [];
-  connection.query("SELECT dep_name FROM departments", function(err,res){
+var departmentSales = () => {
+  connection.query("SELECT department_name as Department, sum(price * number_sold) as Total_Sales FROM products group by department_name", function(err,prods){
     if (err){throw err};
-    res.forEach(function(dep){
-      departmentArr.push(dep.dep_name);
-    })
-    departmentObj(departmentArr);
-  });//end of connection query
-} //end departmentSales fn
-
-var departmentObj = (depArr) =>{
-  let salesArr = []
-  let query = "SELECT department_name, number_sold, price, dep_overhead FROM products, departments WHERE products.department_name = departments.dep_name"
-  connection.query(query,function(err,res){
-    if(err){throw err};
-    depArr.forEach(function(dep){
-      let x = {
-        department: dep,
-        overhead: 0,
-        totSales: 0,
-      }
-      res.forEach(function(res){
-        if (dep === res.department_name ){
-          x.overhead = res.dep_overhead;
-          x.totSales += (res.number_sold * res.price)
-        }
+    // console.log(prods)
+    prods.forEach(function(sales){
+      let update = "UPDATE departments SET dep_sales = ?, dep_profit = ? - dep_overhead WHERE dep_name = ? "
+      connection.query(update,[sales.Total_Sales, sales.Total_Sales, sales.Department], function(err,depts){
+        if(err){throw err}
+        // console.log(depts);
       })
-      salesArr.push(x);
-    })
-    // console.log(salesArr);
-    deptLog(salesArr);
-  })//end of connection query
-}//end departmentSales fn
+    })//end of forEach loop
+    setTimeout(function(){ deptLog() }, 100);
+  });//end of connection query
+}//end of departmentSales
 
-var deptLog = (salesArr) =>{
-  salesArr.forEach(function (dep){
-    let profit = (dep.totSales - dep.overhead).toFixed(2);
-    console.log(`
-    Department: ${dep.department} || Overhead: $${dep.overhead.toFixed(2)} || Total Sales: $${dep.totSales.toFixed(2)} || Profit: $${profit}
-    `)
-
-  });//end sales arr.forEach
-  connection.end();
+var deptLog = () =>{
+  connection.query("SELECT dep_name AS Department, dep_overhead AS Overhead, dep_sales AS `Total Sales`, dep_profit AS Profit FROM departments", function(err, res){
+    console.log("\n==========================\n");
+    console.log(asTable(res));
+    console.log("\n==========================\n");
+    connection.end();
+  })
 }
