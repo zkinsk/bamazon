@@ -73,25 +73,21 @@ var addDepartment = () =>{
 
 
 var departmentSales = () => {
-  connection.query("SELECT department_name as Department, sum(price * number_sold) as Total_Sales FROM products group by department_name", function(err,prods){
+  let query = "SELECT department_name as Department, sum(number_sold * price) as Sales, max(dep_overhead) as Overhead, (SUM(number_sold * price) - max(dep_overhead)) as Profit FROM departments INNER JOIN products on departments.dep_name = products.department_name GROUP BY dep_name ORDER BY Profit DESC;"
+  connection.query(query, function(err,prods){
     if (err){throw err};
+    console.log("\n==========================\n");
+    console.log(asTable(prods));
+    console.log("\n==========================\n");
     // console.log(prods)
     prods.forEach(function(sales){
       let update = "UPDATE departments SET dep_sales = ?, dep_profit = ? - dep_overhead WHERE dep_name = ? "
-      connection.query(update,[sales.Total_Sales, sales.Total_Sales, sales.Department], function(err,depts){
+      connection.query(update,[sales.Sales, sales.Sales, sales.Department], function(err,depts){
+        // console.log(depts);
         if(err){throw err}
         // console.log(depts);
       })
     })//end of forEach loop
-    setTimeout(function(){ deptLog() }, 100);
   });//end of connection query
 }//end of departmentSales
 
-var deptLog = () =>{
-  connection.query("SELECT dep_name AS Department, dep_overhead AS Overhead, dep_sales AS `Total Sales`, dep_profit AS Profit FROM departments", function(err, res){
-    console.log("\n==========================\n");
-    console.log(asTable(res));
-    console.log("\n==========================\n");
-    connection.end();
-  })
-}
