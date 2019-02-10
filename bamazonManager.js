@@ -29,7 +29,6 @@ function viewAllProducts(){
       else{
         console.log(`ID: ${prod.id}  -  ${prod.product_name} - $${prod.price} || Stock Quantity: ${prod.stock_quantity}`);
       }
-      
     })
     console.log("\n===============\n")
     showMenu();
@@ -50,11 +49,13 @@ function viewLowInventory(){
 }//end of viewLowInv fn
 
 function addInventory(){
+  let itemList = []
   let query = "SELECT * FROM products"
   connection.query(query,function(err,res){
     if(err){throw err};
     console.log("\n===============\n")
     res.forEach(function(prod){
+      itemList.push(prod.id);
       if (prod.stock_quantity < 5){
         console.log(colors.red(`ID: ${prod.id}  -  ${prod.product_name} - $${prod.price} || Stock Quantity: ${prod.stock_quantity}`));
       }
@@ -68,16 +69,29 @@ function addInventory(){
         type: "input",
         name: "prodID",
         message: "Which ID to add Inventory? ",
+        validate: function (value) {
+          value = parseInt(value)
+          if (itemList.includes(value)) {
+            return true;
+          }
+          return false;
+        }//end of validation
       },
       {
         type: "input",
         name: "prodIncrement",
-        message: "How many to add?"
+        message: "How many to add?",
+        validate: function (value) {
+          if (isNaN(value) === false) {
+            return true;
+          }
+          return false;
+        }
       }
       ]).then(function(add){
         let pID = add.prodID;
-        let inCr = add.prodIncrement;
-        console.log(pID, inCr);
+        let inCr = parseInt(add.prodIncrement);
+        // console.log(pID, inCr);
         let update = "UPDATE products SET stock_quantity = stock_quantity + ? WHERE ?"; 
         connection.query(update,[inCr, {id:pID}],function(err,res){
           if(err){throw err};
@@ -115,15 +129,27 @@ function addNewItem(deptArr){
     {
       type: "input",
       name: "cost",
-      message: "How much will it sell for?"
+      message: "How much will it sell for?",
+      validate: function (value) {
+        if (isNaN(value) === false) {
+          return true;
+        }
+        return false;
+      }
     },
     {
       type: "input", 
       name: "num",
-      message: "How many to sell?"
+      message: "How many to sell?",
+      validate: function (value) {
+        if (isNaN(value) === false) {
+          return true;
+        }
+        return false;
+      }
     }
     ]).then(function(add){
-      console.log(add);
+      // console.log(add);
       let insert = "INSERT INTO products SET ?";
       let newProd = {
         product_name: add.name,

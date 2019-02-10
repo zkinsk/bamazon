@@ -20,7 +20,7 @@ connection.connect(function(err) {
 });
 
 var menuBar = () => {
-let choicesArr = ["Sales by Department", "Add a new Department"];
+let choicesArr = ["Sales by Department", "Add a new Department", "Exit"];
 inquirer.prompt([
   {
     type: "list",
@@ -36,6 +36,10 @@ inquirer.prompt([
     break;
     case choicesArr[1]:
     addDepartment();
+    break;
+    case choicesArr[2]:
+    connection.end();
+    process.exit();
     break;
   }
 })
@@ -73,21 +77,26 @@ var addDepartment = () =>{
 
 
 var departmentSales = () => {
-  let query = "SELECT department_name as Department, sum(number_sold * price) as Sales, max(dep_overhead) as Overhead, (SUM(number_sold * price) - max(dep_overhead)) as Profit FROM departments INNER JOIN products on departments.dep_name = products.department_name GROUP BY dep_name ORDER BY Profit DESC;"
-  connection.query(query, function(err,prods){
+  let queryPt1 = "SELECT dep_name as Department, concat('$', format(sum(number_sold * price),2)) as Sales, CONCAT('$',FORMAT(max(dep_overhead),2)) as Overhead, CONCAT('$', FORMAT((SUM(number_sold * price) - max(dep_overhead)),2)) as Profit FROM departments ";
+  let queryPt2 = "LEFT JOIN products on departments.dep_name = products.department_name GROUP BY dep_name ORDER BY SUM(number_sold * price) - max(dep_overhead) DESC;"
+  connection.query(queryPt1 + "" + queryPt2, function(err,prods){
     if (err){throw err};
     console.log("\n==========================\n");
     console.log(asTable(prods));
     console.log("\n==========================\n");
     // console.log(prods)
     prods.forEach(function(sales){
-      let update = "UPDATE departments SET dep_sales = ?, dep_profit = ? - dep_overhead WHERE dep_name = ? "
-      connection.query(update,[sales.Sales, sales.Sales, sales.Department], function(err,depts){
-        // console.log(depts);
-        if(err){throw err}
-        // console.log(depts);
-      })
+      let salesNum = sales.Sales;
+      // console.log(salesNum);
+      if (salesNum){
+        salesNum = Number(salesNum.replace(/[^0-9.-]+/g,""));
+        // console.log(salesNum);
+        let update = "UPDATE departments SET dep_sales = ?, dep_profit = ? - dep_overhead WHERE dep_name = ? "
+        connection.query(update,[salesNum, salesNum, sales.Department], function(err,depts){
+          if(err){throw err}
+        })
+      }
     })//end of forEach loop
+    menuBar();
   });//end of connection query
 }//end of departmentSales
-
