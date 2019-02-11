@@ -21,15 +21,15 @@ The app has three interfaces:
 2. Consolidates the low inentory items into one list
 3. Allows for the increase of item inventory
 4. Allows for creation of an entirely new for purchase
-  - The department into which a new item can be entered is limited by the existing departments
+    - The department into which a new item can be entered is limited by the existing departments
   
 ### Supervisor Interface: 
 1. Allows for an overview of all departments
-  - Individual Department Sales
-  - Individual Department Overhead
-  - Individual Department Pofit
+    - Individual Department Sales
+    - Individual Department Overhead
+    - Individual Department Pofit
     -Profit is calculated on the fly as the database is updated for purchases
 2. Allows the supervisor to create a new department and enter its overhead
-  - New departments are immediatly available for managers to enter products into
+    - New departments are immediatly available for managers to enter products into
   
   
