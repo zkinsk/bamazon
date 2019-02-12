@@ -2,7 +2,7 @@
 
 Basic command line storefront using MySql and node.js.
 
-Here is a [Link] (https://www.youtube.com/watch?v=aXMaJYFlwHU&feature=youtu.be) to the app in action.
+Here is a [Link](https://www.youtube.com/watch?v=aXMaJYFlwHU&feature=youtu.be) to the app in action.
 
 The app has three interfaces: 
 
