@@ -150,11 +150,14 @@ function addNewItem(deptArr){
     }
     ]).then(function(add){
       // console.log(add);
+      let price = add.cost;
+      add.num = parseInt(add.num);
+      price = Number(price.replace(/[^0-9.-]+/g,""));
       let insert = "INSERT INTO products SET ?";
       let newProd = {
-        product_name: add.name,
-        department_name: add.dept,
-        price: add.cost,
+        product_name: add.name.trim(),
+        department_name: add.dept.trim(),
+        price: price,
         stock_quantity: add.num
       };
       connection.query(insert,newProd,function(err,res){

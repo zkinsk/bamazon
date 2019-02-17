@@ -28,21 +28,20 @@ inquirer.prompt([
     choices: choicesArr,
     name: "action"
   }
-
-]).then(function(action){
-  switch(action.action){
-    case choicesArr[0]:
-    departmentSales();
-    break;
-    case choicesArr[1]:
-    addDepartment();
-    break;
-    case choicesArr[2]:
-    connection.end();
-    process.exit();
-    break;
-  }
-})
+  ]).then(function(action){
+    switch(action.action){
+      case choicesArr[0]:
+      departmentSales();
+      break;
+      case choicesArr[1]:
+      addDepartment();
+      break;
+      case choicesArr[2]:
+      connection.end();
+      process.exit();
+      break;
+    }
+  })
 }//end menuBar fn
 
 var addDepartment = () =>{
@@ -66,7 +65,7 @@ var addDepartment = () =>{
     };
     connection.query(insert,newDep,function(err,res){
       if(err){throw err};
-      console.log(res);
+      // console.log(res);
       console.log("\n===============\n")
       console.log(colors.bold(` ${add.dept_name} Has been added.`));
       console.log("\n===============\n")
@@ -77,9 +76,17 @@ var addDepartment = () =>{
 
 
 var departmentSales = () => {
-  let queryPt1 = "SELECT dep_name as Department, concat('$', format(sum(number_sold * price),2)) as Sales, CONCAT('$',FORMAT(max(dep_overhead),2)) as Overhead, CONCAT('$', FORMAT((SUM(number_sold * price) - max(dep_overhead)),2)) as Profit FROM departments ";
-  let queryPt2 = "LEFT JOIN products on departments.dep_name = products.department_name GROUP BY dep_name ORDER BY SUM(number_sold * price) - max(dep_overhead) DESC;"
-  connection.query(queryPt1 + "" + queryPt2, function(err,prods){
+  let query = `
+    SELECT 
+      dep_name as Department, 
+      CONCAT('$', format(sum(number_sold * price),2)) as Sales, 
+      CONCAT('$',FORMAT(max(dep_overhead),2)) as Overhead, 
+      CONCAT('$', FORMAT((SUM(number_sold * price) - max(dep_overhead)),2)) as Profit 
+    FROM departments 
+    LEFT JOIN products on departments.dep_name = products.department_name 
+    GROUP BY dep_name ORDER BY SUM(number_sold * price) - max(dep_overhead) DESC;
+  `//end of query
+  connection.query(query, function(err,prods){
     if (err){throw err};
     console.log("\n==========================\n");
     console.log(asTable(prods));
